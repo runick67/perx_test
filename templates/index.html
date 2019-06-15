@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Perx test task</title>
+</head>
+<body>
+    <form action="/" method="post" class="pt-3">
+      {% for field in form %}
+      <div class="form-group row px-5">
+        <label for="{{ field.id }}" class="col-sm-2 col-form-label"> {{ field.label.text }} </label>
+        <div class="col-sm-10">
+          <input name="{{ field.id }}" type="text" class="form-control has-error has-feedback
+          {% if field.errors %} is-invalid {% endif %}" id="{{ field.id }}" placeholder="{{ field.description }}"
+          {% if not field.errors and field.data != None %}value="{{ field.data }}"{% endif %}>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="form-group row px-5">
+        <div class="col-sm-10">
+          <button type="submit" value="submit" class="btn btn-primary">Добавить задачу</button>
+        </div>
+       </div>
+    </form>
+    {% if form.task_added %}
+    <div class="alert alert-success px-5" role="alert">Задача добавлена</div>
+    {% endif %}
+    {% if not running_tasks and not tasks %}
+    <div class="px-5">Список задач отсутствует</div>
+    {% else %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Номер в очереди</th>
+          <th scope="col">Статус</th>
+          <th scope="col">N</th>
+          <th scope="col">D</th>
+          <th scope="col">N1</th>
+          <th scope="col">Интервал</th>
+          <th scope="col">Текущее значение</th>
+          <th scope="col">Дата старта</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for running_task in running_tasks %}
+        <tr>
+          <td></td>
+          <td>В процессе</td>
+          <td>{{ running_task.count }}</td>
+          <td>{{ running_task.delta }}</td>
+          <td>{{ running_task.start }}</td>
+          <td>{{ running_task.interval }}</td>
+          <td>{{ running_task.current }}</td>
+          <td>{{ running_task.date_of_start }}</td>
+        </tr>
+      {% endfor %}
+      {% for running_task in tasks %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>В очереди</td>
+          <td>{{ running_task.count }}</td>
+          <td>{{ running_task.delta }}</td>
+          <td>{{ running_task.start }}</td>
+          <td>{{ running_task.interval }}</td>
+          <td></td>
+          <td></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+</body>
+</html>
