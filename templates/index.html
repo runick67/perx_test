@@ -53,7 +53,7 @@
           <td>{{ running_task.start }}</td>
           <td>{{ running_task.interval }}</td>
           <td>{{ running_task.current }}</td>
-          <td>{{ running_task.date_of_start }}</td>
+          <td>{{ running_task.date_of_start.strftime('%Y-%m-%d %H:%M:%S') }}</td>
         </tr>
       {% endfor %}
       {% for running_task in tasks %}
