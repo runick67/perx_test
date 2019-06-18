@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 
 
 class Task:
@@ -24,6 +25,8 @@ class Task:
         """ Runs the task
 
         """
+        if not self.date_of_start:
+            self.date_of_start = datetime.now()
         for i in range(1, self.count):
             self.current += self.delta
             await asyncio.sleep(self.interval)

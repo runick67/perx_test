@@ -43,4 +43,4 @@ def response(form):
     :return: common template dictionary
     """
     return {'running_tasks': task_queue.running_tasks,
-            'tasks': task_queue.tasks, 'form': form}
+            'tasks': task_queue.task_in_queue, 'form': form}

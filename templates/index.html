@@ -56,14 +56,14 @@
           <td>{{ running_task.date_of_start.strftime('%Y-%m-%d %H:%M:%S') }}</td>
         </tr>
       {% endfor %}
-      {% for running_task in tasks %}
+      {% for task in tasks %}
         <tr>
           <td>{{ loop.index }}</td>
           <td>В очереди</td>
-          <td>{{ running_task.count }}</td>
-          <td>{{ running_task.delta }}</td>
-          <td>{{ running_task.start }}</td>
-          <td>{{ running_task.interval }}</td>
+          <td>{{ task.count }}</td>
+          <td>{{ task.delta }}</td>
+          <td>{{ task.start }}</td>
+          <td>{{ task.interval }}</td>
           <td></td>
           <td></td>
         </tr>

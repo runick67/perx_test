@@ -1,4 +1,5 @@
 import asyncio
+import functools
 from datetime import datetime
 
 
@@ -13,7 +14,30 @@ class TasksQueue:
 
         """
         self.tasks = []
-        self.running_tasks = []
+        self.semaphore = asyncio.Semaphore(self.MAX_TASK_QUEUE)
+
+    @property
+    def running_tasks(self):
+        """ Returns list of running tasks
+
+        :return: list of running tasks
+        """
+        return list(filter(lambda task: task.date_of_start, self.tasks))
+
+    @property
+    def task_in_queue(self):
+        """ Returns list of not running tasks
+
+        :return: list of not running tasks
+        """
+        return list(filter(lambda task: not task.date_of_start, self.tasks))
+
+    def on_task_done(self, task, _):
+        """ Callback that calls when task done
+
+        :param task: Task
+        """
+        self.tasks.remove(task)
 
     def add_task(self, task):
         """ Adds task to queue
@@ -21,23 +45,15 @@ class TasksQueue:
         :param task: Task to add
         """
         self.tasks.append(task)
-        self.check_if_can_run()
-
-    def check_if_can_run(self):
-        """ Check if can run task
-
-        """
-        if len(self.running_tasks) < self.MAX_TASK_QUEUE and self.tasks:
-            task = self.tasks.pop(0)
-            self.running_tasks.append(task)
+        fut = asyncio.ensure_future(self.run_task(task))
+        if not self.semaphore.locked():
             task.date_of_start = datetime.now()
-            asyncio.ensure_future(self.run_task(task))
+        fut.add_done_callback(functools.partial(self.on_task_done, task))
 
     async def run_task(self, task):
         """ Runs task
 
         :param task: task to run
         """
-        await task.run()
-        self.running_tasks.remove(task)
-        self.check_if_can_run()
+        async with self.semaphore:
+            await task.run()
